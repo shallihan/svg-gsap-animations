@@ -18,6 +18,7 @@ const IndexPage = ({ data }) => {
   const backgroundSvgs = useRef([]);
 
   useEffect(() => {
+
     const fadeOutHeader = gsap.timeline({
       scrollTrigger: {
         trigger: sections.current[0],
@@ -37,25 +38,28 @@ const IndexPage = ({ data }) => {
     });
 
     sections.current.forEach((section, index) => {
-      const animateBlob = gsap.timeline({
-        scrollTrigger: {
-          trigger: section,
-          start: "top bottom-=300px",
-          end: "max",
-          scrub: 0.5,
-          snap: {
-            snapTo: 0.1,
-            duration: 3,
-            inertia: false
-          }
+      const paths = Object.values(backgroundSvgs.current[index].children).map(
+        (group) => {
+          return group.children[0];
+        }
+      );
+
+      gsap.fromTo(
+        paths,
+        {
+          transform: "scale(0)",
         },
-      });
-
-      const paths = Object.values(backgroundSvgs.current[index].children).map((group) => {
-        return group.children[0];
-      });
-
-      animateBlob.fromTo(paths, { scale: 0 }, { scale: 1 });
+        {
+          transform: "scale(1)",
+          duration: 5,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom-=300",
+            toggleActions: "play none none reverse",
+          },
+        }
+      );
     });
 
     fadeOutHeader.fromTo(header.current, { opacity: 1 }, { opacity: 0 });

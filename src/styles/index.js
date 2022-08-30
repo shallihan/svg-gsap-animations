@@ -2,16 +2,6 @@ import { createGlobalStyle } from "styled-components";
 import "../fonts/fonts.css";
 
 const GlobalStyle = createGlobalStyle`
-  @keyframes fadeIn {
-    0% {
-      opacity: 0;
-      transform: translate(0, 24px);
-    }
-    100% {
-      opacity: 1;
-      transform: translate(0, 0);
-    }
-  }
 
 @keyframes hyphen {
   0% {
@@ -19,15 +9,6 @@ const GlobalStyle = createGlobalStyle`
   }
   100% {
     width: 1em;
-  }
-}
-
-@keyframes blob {
-  0% {
-    transform: scale(0);
-  }
-  100% {
-    transform: scale(1);
   }
 }
 

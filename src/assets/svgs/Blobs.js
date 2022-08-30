@@ -61,9 +61,6 @@ const StyledSVG = styled.svg`
   height: 100vh;
   mix-blend-mode: multiply;
   pointer-events: none;
-/*   path {
-    transform: scale(0.5);
-  } */
 `;
 
 export default SvgBlobs;
