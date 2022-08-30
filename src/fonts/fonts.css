@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'Mazius Review';
+    src: url(./maziusreview-regular.woff2);
+  }
+  
+  @font-face {
+    font-family: 'Mazius Review';
+    font-style: italic;
+    src: url(./maziusreview-extraitalic.woff2);
+  }

@@ -1,176 +1,159 @@
-import * as React from "react"
+import React, { useEffect, useRef } from "react";
+import styled from "styled-components";
+import { graphql } from "gatsby";
+import { getImage, GatsbyImage } from "gatsby-plugin-image";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import GlobalStyle from "../styles";
+import { Arrow, BackgroundBlobs } from "../assets/svgs";
 
-const pageStyles = {
-  color: "#232129",
-  padding: 96,
-  fontFamily: "-apple-system, Roboto, sans-serif, serif",
-}
-const headingStyles = {
-  marginTop: 0,
-  marginBottom: 64,
-  maxWidth: 320,
-}
-const headingAccentStyles = {
-  color: "#663399",
-}
-const paragraphStyles = {
-  marginBottom: 48,
-}
-const codeStyles = {
-  color: "#8A6534",
-  padding: 4,
-  backgroundColor: "#FFF4DB",
-  fontSize: "1.25rem",
-  borderRadius: 4,
-}
-const listStyles = {
-  marginBottom: 96,
-  paddingLeft: 0,
-}
-const listItemStyles = {
-  fontWeight: 300,
-  fontSize: 24,
-  maxWidth: 560,
-  marginBottom: 30,
-}
+gsap.registerPlugin(ScrollTrigger);
 
-const linkStyle = {
-  color: "#8954A8",
-  fontWeight: "bold",
-  fontSize: 16,
-  verticalAlign: "5%",
-}
+const IndexPage = ({ data }) => {
+  const pageData = data.allMarkdownRemark.edges[0].node.frontmatter;
 
-const docLinkStyle = {
-  ...linkStyle,
-  listStyleType: "none",
-  marginBottom: 24,
-}
+  const arrow = useRef();
+  const header = useRef();
+  const sections = useRef([]);
+  const backgroundSvgs = useRef([]);
 
-const descriptionStyle = {
-  color: "#232129",
-  fontSize: 14,
-  marginTop: 10,
-  marginBottom: 0,
-  lineHeight: 1.25,
-}
+  useEffect(() => {
+    const fadeOutHeader = gsap.timeline({
+      scrollTrigger: {
+        trigger: sections.current[0],
+        start: 250,
+        end: 450,
+        scrub: true,
+      },
+    });
 
-const docLink = {
-  text: "Documentation",
-  url: "https://www.gatsbyjs.com/docs/",
-  color: "#8954A8",
-}
+    const fadeOutArrow = gsap.timeline({
+      scrollTrigger: {
+        trigger: sections.current[0],
+        start: 200,
+        end: 300,
+        scrub: true,
+      },
+    });
 
-const badgeStyle = {
-  color: "#fff",
-  backgroundColor: "#088413",
-  border: "1px solid #088413",
-  fontSize: 11,
-  fontWeight: "bold",
-  letterSpacing: 1,
-  borderRadius: 4,
-  padding: "4px 6px",
-  display: "inline-block",
-  position: "relative",
-  top: -2,
-  marginLeft: 10,
-  lineHeight: 1,
-}
+    sections.current.forEach((section, index) => {
+      const animateBlob = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          end: "+=100%",
+          scrub: true,
+        },
+      });
 
-const links = [
-  {
-    text: "Tutorial",
-    url: "https://www.gatsbyjs.com/docs/tutorial/",
-    description:
-      "A great place to get started if you're new to web development. Designed to guide you through setting up your first Gatsby site.",
-    color: "#E95800",
-  },
-  {
-    text: "How to Guides",
-    url: "https://www.gatsbyjs.com/docs/how-to/",
-    description:
-      "Practical step-by-step guides to help you achieve a specific goal. Most useful when you're trying to get something done.",
-    color: "#1099A8",
-  },
-  {
-    text: "Reference Guides",
-    url: "https://www.gatsbyjs.com/docs/reference/",
-    description:
-      "Nitty-gritty technical descriptions of how Gatsby works. Most useful when you need detailed information about Gatsby's APIs.",
-    color: "#BC027F",
-  },
-  {
-    text: "Conceptual Guides",
-    url: "https://www.gatsbyjs.com/docs/conceptual/",
-    description:
-      "Big-picture explanations of higher-level Gatsby concepts. Most useful for building understanding of a particular topic.",
-    color: "#0D96F2",
-  },
-  {
-    text: "Plugin Library",
-    url: "https://www.gatsbyjs.com/plugins",
-    description:
-      "Add functionality and customize your Gatsby site or app with thousands of plugins built by our amazing developer community.",
-    color: "#8EB814",
-  },
-  {
-    text: "Build and Host",
-    url: "https://www.gatsbyjs.com/cloud",
-    badge: true,
-    description:
-      "Now you’re ready to show the world! Give your Gatsby site superpowers: Build and host on Gatsby Cloud. Get started for free!",
-    color: "#663399",
-  },
-]
+      const paths = Object.values(backgroundSvgs.current[index].children).map((group) => {
+        return group.children[0];
+      });
 
-const IndexPage = () => {
+      animateBlob.fromTo(paths, { scale: 0 }, { scale: 1 });
+    });
+
+    fadeOutHeader.fromTo(header.current, { opacity: 1 }, { opacity: 0 });
+    fadeOutArrow.fromTo(arrow.current, { opacity: 1 }, { opacity: 0 });
+  }, []);
+
   return (
-    <main style={pageStyles}>
-      <h1 style={headingStyles}>
-        Congratulations
-        <br />
-        <span style={headingAccentStyles}>— you just made a Gatsby site! 🎉🎉🎉</span>
-      </h1>
-      <p style={paragraphStyles}>
-        Edit <code style={codeStyles}>src/pages/index.js</code> to see this page
-        update in real-time. 😎
-      </p>
-      <ul style={listStyles}>
-        <li style={docLinkStyle}>
-          <a
-            style={linkStyle}
-            href={`${docLink.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
+    <>
+      <GlobalStyle />
+      <BackgroundBlobs blobs={backgroundSvgs} />
+      <Header ref={header}>
+        <h1>
+          Jessie
+          <span />
+          Cullen
+        </h1>
+        <h2>Fine art curator, living and working in Berlin, Germany</h2>
+      </Header>
+      <Arrow setRef={arrow} />
+      {pageData.sections.map((section, index) => {
+        const image = getImage(section.image);
+        return (
+          <Section
+            ref={(element) => (sections.current[index] = element)}
+            key={index}
           >
-            {docLink.text}
-          </a>
-        </li>
-        {links.map(link => (
-          <li key={link.url} style={{ ...listItemStyles, color: link.color }}>
-            <span>
-              <a
-                style={linkStyle}
-                href={`${link.url}?utm_source=starter&utm_medium=start-page&utm_campaign=minimal-starter`}
-              >
-                {link.text}
-              </a>
-              {link.badge && (
-                <span style={badgeStyle} aria-label="New Badge">
-                  NEW!
-                </span>
-              )}
-              <p style={descriptionStyle}>{link.description}</p>
-            </span>
-          </li>
-        ))}
-      </ul>
-      <img
-        alt="Gatsby G Logo"
-        src="data:image/svg+xml,%3Csvg width='24' height='24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 2a10 10 0 110 20 10 10 0 010-20zm0 2c-3.73 0-6.86 2.55-7.75 6L14 19.75c3.45-.89 6-4.02 6-7.75h-5.25v1.5h3.45a6.37 6.37 0 01-3.89 4.44L6.06 9.69C7 7.31 9.3 5.63 12 5.63c2.13 0 4 1.04 5.18 2.65l1.23-1.06A7.959 7.959 0 0012 4zm-8 8a8 8 0 008 8c.04 0 .09 0-8-8z' fill='%23639'/%3E%3C/svg%3E"
-      />
-    </main>
-  )
-}
+            <figure>
+              <GatsbyImage image={image} alt={section.figcaption} />
+              <figcaption>{section.figcaption}</figcaption>
+            </figure>
+          </Section>
+        );
+      })}
+    </>
+  );
+};
 
-export default IndexPage
+export const query = graphql`
+  query {
+    allMarkdownRemark(filter: { frontmatter: { id: { eq: 1 } } }) {
+      edges {
+        node {
+          frontmatter {
+            sections {
+              figcaption
+              image {
+                childImageSharp {
+                  gatsbyImageData(layout: FULL_WIDTH)
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
-export const Head = () => <title>Home Page</title>
+const Header = styled.header`
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  h1 {
+    font-size: 10vw;
+    font-style: italic;
+    font-weight: 400;
+    animation: fadeIn 0.4s 1s both cubic-bezier(0.9, 0.03, 0.69, 0.22);
+  }
+  h2 {
+    text-align: center;
+    max-width: 480px;
+    font-size: 36px;
+    font-weight: 400;
+    animation: fadeIn 0.4s 2s both cubic-bezier(0.9, 0.03, 0.69, 0.22);
+  }
+  span {
+    background-color: #000000;
+    width: 1em;
+    height: 0.02em;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 0.5rem;
+    animation: hyphen 2s 1s infinite alternate cubic-bezier(0.86, 0, 0.07, 1);
+  }
+`;
+
+const Section = styled.section`
+  padding: 200px;
+  figure {
+    max-width: 600px;
+    margin: 0 auto;
+    figcaption {
+      margin: 24px 20% 0 0;
+    }
+    img {
+      filter: grayscale(100%) brightness(125%) contrast(125%);
+    }
+  }
+`;
+
+export default IndexPage;
