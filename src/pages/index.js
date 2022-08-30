@@ -40,8 +40,14 @@ const IndexPage = ({ data }) => {
       const animateBlob = gsap.timeline({
         scrollTrigger: {
           trigger: section,
-          end: "+=100%",
-          scrub: true,
+          start: "top bottom-=300px",
+          end: "max",
+          scrub: 0.5,
+          snap: {
+            snapTo: 0.1,
+            duration: 3,
+            inertia: false
+          }
         },
       });
 
